@@ -1,0 +1,8 @@
+.tmp/
+patch-diag.cjs
+node_modules/
+*.tgz
+*.zip
+dist-release/
+.DS_Store
+Thumbs.db

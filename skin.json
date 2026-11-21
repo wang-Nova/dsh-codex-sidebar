@@ -1,0 +1,11 @@
+{
+  "id": "codex-sidebar",
+  "name": "Codex Sidebar",
+  "tagline": "Codex 风格独立导航栏与侧栏（保留原生对话区）",
+  "package": "dsh-codex-sidebar",
+  "bodyAttr": "data-dsh-codex-sidebar",
+  "accent": "#0285ff",
+  "wiring": {
+    "id": "ui-skin-codex-sidebar"
+  }
+}

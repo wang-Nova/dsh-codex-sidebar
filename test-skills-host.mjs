@@ -1,0 +1,22 @@
+import assert from 'node:assert/strict';
+import { apply } from './lib/skills-host.js';
+const calls = [];
+const skill = { name: 'demo', description: 'Demo', source: 'bundled', provider: 'test', invocation: { modelInvocable: true, userInvocable: false }, content: '# Actual skill' };
+const registry = { async snapshot(options) { calls.push(['snapshot', options]); return { skills: [skill], complete: true }; }, async get(name, options) { calls.push(['get', name, options]); return name === 'demo' ? skill : undefined; } };
+let HostClass;
+class TypertRemoteService { constructor(ctx, name) { this.ctx = ctx; this.name = name; } }
+const Remote = () => {};
+const values = { skills: registry };
+const ctx = { get: name => values[name], plugin: cls => { HostClass = cls; } };
+apply(ctx, { Remote, TypertRemoteService });
+const service = new HostClass(ctx);
+const catalog = await service.catalog({ cwd: '/workspace' });
+assert.equal(catalog.skills[0].source, 'bundled');
+assert.equal(catalog.skills[0].invocation.userInvocable, false);
+assert.equal(calls[0][1].cwd, '/workspace');
+const result = await service.content({ name: 'demo', cwd: '/workspace' });
+assert.equal(result.content, '# Actual skill');
+assert.equal((await service.content({ name: 'missing' })), null);
+values.skills = undefined;
+await assert.rejects(service.catalog({}), /skill registry is not mounted/);
+console.log('skills host regression tests passed');
